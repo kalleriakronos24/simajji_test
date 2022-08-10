@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "pusamania94",
+    "database": "simajji_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "simajji_test_tests",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "simajji_test_production",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
