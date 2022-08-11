@@ -25,6 +25,12 @@ class CartController extends Service {
 
 		return await cart.getAllCartItems(res);
 	}
+
+    async deleteItemFromCart(req,res) {
+        const cart = super.cartService();
+
+        return await cart.deleteItemFromCart(res,req);
+    }
 }
 
 export default CartController;

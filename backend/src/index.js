@@ -93,7 +93,6 @@ class App extends Routes {
         // routes
         app.use('/api/v1', super.route())
 
-
         // cookie parser and CSRF Middleware
         app.use(cookieParser());
         // app.use(csurf({ cookie : true }));

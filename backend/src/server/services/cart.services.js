@@ -46,6 +46,31 @@ class CartService {
 		}
 	}
 
+	async deleteItemFromCart(res, req) {
+		const { id } = req.params;
+
+		const check = await this.checkIfExist({
+			id: id,
+		});
+
+		if (!check) {
+			this.util.setError(401, 'Failed to get Cart item id', {
+				reason: 'cart id not found',
+			});
+			this.util.send(res);
+			return;
+		}
+
+		const data = await this.cart.destroy({
+			where: {
+				id: id,
+			},
+		});
+
+		this.util.setSuccess(200, `Success delete cart id ${id}`, data);
+		this.util.send(res);
+	}
+
 	async getAllCartItems(res, body) {
 		try {
 			const data = await this.cart.findAll({
@@ -64,10 +89,10 @@ class CartService {
 	}
 
 	async checkIfExist(data) {
-		const check = await this.cart.findOne({ where: data });
+		const check = await this.cart.findOne({ where: data, raw: true });
 
 		let result = false;
-		if (!!check) {
+		if (!check) {
 			result = true;
 		}
 

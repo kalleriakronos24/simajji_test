@@ -9,7 +9,6 @@ class ItemsService {
 	}
 
 	async addNewItems(response, body) {
-
 		// body request
 		const { name, price, ratings, stocks, userId } = body;
 
@@ -29,10 +28,10 @@ class ItemsService {
 	}
 
 	async checkIfExist(data) {
-		const check = await this.items.findOne({ where: data })
+		const check = await this.items.findOne({ where: data, raw: true });
 
 		let result = false;
-		if (!!check) {
+		if (!check) {
 			result = true;
 		}
 
