@@ -8,8 +8,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      itemName: {
-        type: Sequelize.STRING
+      itemId: {
+        type: Sequelize.INTEGER,
+        references : {
+          model : 'Items',
+          key : 'id'
+        }
       },
       qty: {
         type: Sequelize.INTEGER

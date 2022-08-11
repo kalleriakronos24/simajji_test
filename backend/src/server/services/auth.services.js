@@ -2,7 +2,6 @@ import JwtService from './jwt.services';
 import bcrypt from 'bcrypt';
 import Model from '../models/index';
 import Util from '../utils/customResponse';
-import User from '../../core/models/user';
 
 class AuthService {
 	constructor() {
@@ -51,7 +50,8 @@ class AuthService {
 
 		if (emailCheck) {
 			this.util.setError(401, 'Email has been used, please use another email');
-			return this.util.send(response);
+			this.util.send(response);
+			return;
 		}
 
 		// else
@@ -65,11 +65,11 @@ class AuthService {
 
 		this.util.setSuccess(201, 'User Created!', newUser);
 
-		return this.util.send(response);
+		this.util.send(response);
+		return;
 	}
 
 	/**
-	 *
 	 * @param {*} email string
 	 * @description email validation, check email if exists
 	 * @returns Null | Users
@@ -131,7 +131,6 @@ class AuthService {
 
 			const token = await this.generateToken({ ...userData });
 
-			console.log('token >> ', token);
 			// save to auth table
 			try {
 				const authModel = await this.auth.create({ userId: userData.id, token });
@@ -140,11 +139,13 @@ class AuthService {
 				return this.util.send(res);
 			} catch (err) {
 				this.util.setSuccess(401, 'Login Failed', { reason: err.message });
-				return this.util.send(res);
+				this.util.send(res);
+				return;
 			}
 		} else {
 			this.util.setError(401, 'password is incorrect, please try again');
-			return this.util.send(res);
+			this.util.send(res);
+			return;
 		}
 	}
 
@@ -210,6 +211,7 @@ class AuthService {
         } catch(err) {
             this.util.setError(403, 'Fetch Tokens Failed', { reason: err.message });
 			this.util.send(res);
+			return;
         }
     }
 }

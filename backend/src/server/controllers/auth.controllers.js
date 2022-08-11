@@ -18,7 +18,6 @@ class AuthController extends Service {
         const body = req.body;
 
         return await auth.userRegister(res, body);
-
     };
 
     /**
@@ -55,7 +54,6 @@ class AuthController extends Service {
     async fetchUsersCookie(req,res) {
 
         const auth = super.authService();
-
         return auth.fetchUsersCookie(req, res);
     }
 };

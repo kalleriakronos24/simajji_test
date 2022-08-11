@@ -21,6 +21,10 @@ class Model {
         return database.Auth
     }
 
+    items() {
+        return database.Items
+    }
+
 }
 
 export default Model;
