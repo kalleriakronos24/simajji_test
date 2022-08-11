@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Cart.belongsTo(models.User, { foreignKey: 'userId', onDelete : 'CASCADE' });
+      Cart.belongsTo(models.User, { foreignKey: 'userId', as:'users', onDelete : 'CASCADE' });
     }
   }
   Cart.init({

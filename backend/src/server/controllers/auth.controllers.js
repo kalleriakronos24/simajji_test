@@ -45,6 +45,13 @@ class AuthController extends Service {
         return await auth.setUsersCookie(req, res, body.value);
     }
 
+    async getAllUsersToken(req,res) {
+        const auth = super.authService();
+        const body = req.body;
+
+        return await auth.getAllUsersToken(req,res)
+    }
+
     async fetchUsersCookie(req,res) {
 
         const auth = super.authService();

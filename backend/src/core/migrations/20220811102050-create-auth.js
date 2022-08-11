@@ -9,13 +9,17 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       token: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       loggedInAt: {
         type: Sequelize.DATE
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references : {
+          model : 'Users',
+          key : 'id'
+        }
       },
       createdAt: {
         allowNull: false,

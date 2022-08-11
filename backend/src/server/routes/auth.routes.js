@@ -12,8 +12,7 @@ class AuthRoutes extends Controller {
         return [
             this.router.post('/auth/sign-up', super.authController().userRegister),
             this.router.post('/auth/sign-in', super.authController().userLogin),
-            this.router.post('/auth/set-cookie', super.authController().setUsersCookie),
-            this.router.get('/auth/fetch-cookie', super.authController().fetchUsersCookie),
+            this.router.get('/auth/fetch-tokens', super.authController().getAllUsersToken),
             this.router.get('/auth/test', (req,res) => {
                 res.send('Hello i am a robot');
             })

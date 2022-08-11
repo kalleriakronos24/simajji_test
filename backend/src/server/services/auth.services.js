@@ -2,6 +2,7 @@ import JwtService from './jwt.services';
 import bcrypt from 'bcrypt';
 import Model from '../models/index';
 import Util from '../utils/customResponse';
+import User from '../../core/models/user';
 
 class AuthService {
 	constructor() {
@@ -112,7 +113,7 @@ class AuthService {
 	async login(res, user) {
 		const { password, email } = user;
 
-		const validateUser = await this.validateUser(user)
+		const validateUser = await this.validateUser(user);
 
 		if (!validateUser) {
 			this.util.setError(401, 'Email not found');
@@ -130,7 +131,7 @@ class AuthService {
 
 			const token = await this.generateToken({ ...userData });
 
-            console.log('token >> ', token)
+			console.log('token >> ', token);
 			// save to auth table
 			try {
 				const authModel = await this.auth.create({ userId: userData.id, token });
@@ -197,6 +198,20 @@ class AuthService {
 			this.util.send(res);
 		}
 	}
+
+	async getAllUsersToken(req, res) {
+
+        try {
+            const tokens = await this.auth.findAll({
+                include : 'users'
+            })
+            this.util.setSuccess(200, 'Fetch Tokens Success', { data: tokens });
+			this.util.send(res);
+        } catch(err) {
+            this.util.setError(403, 'Fetch Tokens Failed', { reason: err.message });
+			this.util.send(res);
+        }
+    }
 }
 
 export default AuthService;
