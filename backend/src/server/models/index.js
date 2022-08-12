@@ -25,6 +25,14 @@ class Model {
         return database.Items
     }
 
+    orders() {
+        return database.Order
+    }
+
+    orderDetails() {
+        return database.OrderDetails
+    }
+
 }
 
 export default Model;

@@ -23,7 +23,8 @@ class CartService {
 			}
 
 			const checkQty = await this.checkItemQty(itemId, res);
-			if (checkQty) {
+
+			if (!!checkQty) {
 				const itemData = checkQty;
 
 				if (qty > itemData.stocks) {
@@ -31,6 +32,7 @@ class CartService {
 						data: itemData,
 					});
 					this.util.send(res);
+					return;
 				}
 
 				const newCartItem = await this.cart.create({ ...body });
@@ -101,9 +103,13 @@ class CartService {
 
 	async checkItemQty(id, res) {
 		try {
-			const check = await this.items.findOne({ id: id, raw: true });
-
-			return !!check;
+			const check = await this.items.findOne({
+				where: {
+					id: id,
+				},
+				raw: true,
+			});
+			return check;
 		} catch (err) {
 			this.util.setError(401, `Failed to get data item of id ${id}`, {
 				reason: err.message,

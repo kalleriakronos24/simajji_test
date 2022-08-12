@@ -1,6 +1,7 @@
 import AuthController from './auth.controllers';
 import CartController from './cart.controllers';
 import ItemsController from './items.controllers';
+import OrderController from './order.controller';
 
 
 class Controller {
@@ -18,6 +19,10 @@ class Controller {
 
     cartController() {
         return new CartController()
+    }
+
+    orderController(){
+        return new OrderController()
     }
 };
 
