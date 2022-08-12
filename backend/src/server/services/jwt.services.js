@@ -14,7 +14,7 @@ class JwtService {
      */
     signInToken(user) {
 
-        const token = this.jwt.sign(user, process.env.JWT_SECRET, { expiresIn : '360d' });
+        const token = this.jwt.sign(user, process.env.JWT_SECRET, { expiresIn : '360d',  });
 
         return token;
     };

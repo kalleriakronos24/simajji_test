@@ -31,7 +31,7 @@ class ItemsService {
 		const check = await this.items.findOne({ where: data, raw: true });
 
 		let result = false;
-		if (!check) {
+		if (!!check) {
 			result = true;
 		}
 

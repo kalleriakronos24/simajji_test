@@ -6,7 +6,7 @@ require('dotenv').config();
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import Routes from './server/routes/index';
-import csurf from 'csurf';
+import Model from './server/models';
 
 // process.on('unhandledRejection', (rejectionErr) => {
 //     // won't execute
@@ -91,6 +91,27 @@ class App extends Routes {
         app.disable('x-powered-by')
 
         // routes
+
+      
+        // authentication checks
+        app.all('*', async (req,res,next) => {
+            var header = req.headers.authorization || '' // get the auth header
+		    var token = header.split(/\s+/).pop() || ''
+
+            const authModel = new Model().auth()
+            const authToken = await authModel.findOne({ where : {
+                token : token
+            }, raw : true })
+
+            if(!!authToken) {
+                next()
+            } else {
+                return res.status(401).json({
+                    message : "Unauthorized, please login first"
+                })
+            }
+
+        })
         app.use('/api/v1', super.route())
 
         // cookie parser and CSRF Middleware

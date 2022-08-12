@@ -92,7 +92,7 @@ class CartService {
 		const check = await this.cart.findOne({ where: data, raw: true });
 
 		let result = false;
-		if (!check) {
+		if (!!check) {
 			result = true;
 		}
 
@@ -103,7 +103,7 @@ class CartService {
 		try {
 			const check = await this.items.findOne({ id: id, raw: true });
 
-			return check;
+			return !!check;
 		} catch (err) {
 			this.util.setError(401, `Failed to get data item of id ${id}`, {
 				reason: err.message,
