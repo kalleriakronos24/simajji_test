@@ -11,6 +11,7 @@ class ItemsRoutes extends Controller {
     route(){
         return [
             this.router.post('/item/add-new', super.itemsController().addNewItems),
+            this.router.get('/item/list', super.itemsController().getItemsList),
         ]
     }
 };

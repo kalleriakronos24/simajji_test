@@ -94,24 +94,45 @@ class App extends Routes {
 
       
         // authentication checks
-        app.all('*', async (req,res,next) => {
-            var header = req.headers.authorization || '' // get the auth header
-		    var token = header.split(/\s+/).pop() || ''
+        // app.all('*', async (req,res,next) => {
+        //     var header = req.headers.authorization || '' // get the auth header
+		//     var token = header.split(/\s+/).pop() || ''
 
-            const authModel = new Model().auth()
-            const authToken = await authModel.findOne({ where : {
-                token : token
-            }, raw : true })
+        //     const authModel = new Model().auth()
+        //     const authToken = await authModel.findOne({ where : {
+        //         token : token
+        //     }, raw : true })
 
-            if(!!authToken) {
-                next()
-            } else {
-                return res.status(401).json({
-                    message : "Unauthorized, please login first"
-                })
-            }
+        //     if(!!authToken) {
+        //         next()
+        //     } else {
+        //         return res.status(401).json({
+        //             message : "Unauthorized, please login first"
+        //         })
+        //     }
 
-        })
+        // })
+
+        // Add headers before the routes are defined
+        app.use(function (req, res, next) {
+        
+            // Website you wish to allow to connect
+            res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        
+            // Request methods you wish to allow
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        
+            // Request headers you wish to allow
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+        
+            // Set to true if you need the website to include cookies in the requests sent
+            // to the API (e.g. in case you use sessions)
+            res.setHeader('Access-Control-Allow-Credentials', true);
+        
+            // Pass to next layer of middleware
+            next();
+        });
+
         app.use('/api/v1', super.route())
 
         // cookie parser and CSRF Middleware

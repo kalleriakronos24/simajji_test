@@ -16,20 +16,27 @@ class CartController extends Service {
 	async addNewCartItem(req, res) {
 		const cart = super.cartService();
 		const body = req.body;
-
 		return await cart.addItemToCart(res, body);
 	}
 
 	async getAllCartItems(req, res) {
 		const cart = super.cartService();
-
 		return await cart.getAllCartItems(res);
 	}
 
     async deleteItemFromCart(req,res) {
         const cart = super.cartService();
-
         return await cart.deleteItemFromCart(res,req);
+    }
+
+    async getCartCount(req,res) {
+        const cart = super.cartService()
+        const body = req.params;
+
+		console.log('params >> ', body)
+
+        return await cart.getCartCount(res, body)
+        
     }
 }
 

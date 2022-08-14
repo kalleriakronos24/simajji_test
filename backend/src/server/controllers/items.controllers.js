@@ -21,6 +21,13 @@ class ItemsController extends Service {
         return await items.addNewItems(res, body)
     };
 
+    async getItemsList(req,res) {
+        const items = super.itemsService()
+        const body = req.body;
+
+        return await items.getItemsList(res, body)
+    }
+
 };
 
 

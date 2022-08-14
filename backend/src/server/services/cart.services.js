@@ -1,3 +1,4 @@
+import { sequelize, Sequelize } from '../../core/models';
 import Model from '../models/index';
 import Util from '../utils/customResponse';
 
@@ -16,8 +17,9 @@ class CartService {
 
 			const check = await this.checkIfExist(body);
 
+			console.log('check >> ', check);
 			if (check) {
-				this.util.setError(401, 'Cart data already exist in database', body);
+				this.util.setError(403, 'Cart data already exist in database', body);
 				this.util.send(res);
 				return;
 			}
@@ -86,6 +88,28 @@ class CartService {
 				reason: err.message,
 			});
 			this.util.send(res);
+			return;
+		}
+	}
+
+	async getCartCount(response, body) {
+		try {
+			const data = await this.cart.count({
+				col: 'userId',
+				where : {
+					userId : body.userId
+				}
+			});
+
+			this.util.setSuccess(200, 'Success get count of cart items', {
+				count : data
+			});
+			this.util.send(response);
+		} catch (err) {
+			this.util.setError(401, 'Failed to get count of cart items', {
+				reason: err.message,
+			});
+			this.util.send(response);
 			return;
 		}
 	}

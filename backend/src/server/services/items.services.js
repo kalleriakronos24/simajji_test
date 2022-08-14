@@ -1,3 +1,4 @@
+import { sequelize, Sequelize } from '../../core/models';
 import Model from '../models/index';
 import Util from '../utils/customResponse';
 
@@ -25,6 +26,23 @@ class ItemsService {
 		this.util.setSuccess(201, 'Item is created!', newItem);
 		this.util.send(response);
 		return;
+	}
+
+	async getItemsList(response, body) {
+		try {
+			const data = await this.items.findAll({
+				include: 'users',
+			});
+
+			this.util.setSuccess(200, 'Success get list of Items data', data);
+			this.util.send(response);
+		} catch (err) {
+			this.util.setError(401, 'Failed to get list of Items data', {
+				reason: err.message,
+			});
+			this.util.send(response);
+			return;
+		}
 	}
 
 	async checkIfExist(data) {
