@@ -33,11 +33,25 @@ class CartController extends Service {
         const cart = super.cartService()
         const body = req.params;
 
-		console.log('params >> ', body)
-
         return await cart.getCartCount(res, body)
         
     }
+
+	async getCartItemsByUserId(req,res) {
+        const cart = super.cartService()
+        const body = req.params;
+		
+        return await cart.getUserCartItems(res, body)
+        
+    }
+
+	async updateCartQty(req,res) {
+		const cart = super.cartService()
+        const body = req.body;
+		
+        return await cart.updateCartQty(res, body)
+		
+	}
 }
 
 export default CartController;

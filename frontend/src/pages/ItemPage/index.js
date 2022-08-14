@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const ItemPage = () => {
 	const [productList, setProductList] = useState([]);
-    const [cartCount, setCartCount] = useState(0);
+	const [cartCount, setCartCount] = useState(0);
 
 	const fetchProduct = async () => {
 		await fetch('http://localhost:8000/api/v1/item/list', {
@@ -24,30 +25,26 @@ const ItemPage = () => {
 			});
 	};
 
-
-
-
-    const addItemToCart = async (data) => {
-
-        await fetch('http://localhost:8000/api/v1/cart/add-new', {
+	const addItemToCart = async (data) => {
+		await fetch('http://localhost:8000/api/v1/cart/add-new', {
 			method: 'post',
-            body : JSON.stringify(data),
-            headers: {
+			body: JSON.stringify(data),
+			headers: {
 				'Content-Type': 'application/json',
 			},
-
 		})
 			.then((response) => response.json())
-			.then((data) => {
-                Swal.fire({
+			.then(async (data) => {
+				Swal.fire({
 					title: data.status === 'error' ? 'Error!' : 'Success!',
 					text: data.status === 'error' ? data.message : data.message,
 					icon: data.status === 'error' ? 'error' : 'success',
 					confirmButtonText: 'Okay',
 				});
+				await fetchCartCount();
 			})
 			.catch((err) => {
-                console.log('error >> ', err);
+				console.log('error >> ', err);
 				Swal.fire({
 					title: 'Error!',
 					text: 'Failed to add to cart',
@@ -55,30 +52,29 @@ const ItemPage = () => {
 					confirmButtonText: 'Okay',
 				});
 			});
-    };
+	};
 
-    const fetchCartCount = async () => {
-        // 3 is user id
-        await fetch('http://localhost:8000/api/v1/cart/count/3', {
-			method: 'get'
-
+	const fetchCartCount = async () => {
+		// 3 is user id
+		await fetch('http://localhost:8000/api/v1/cart/count/3', {
+			method: 'get',
 		})
 			.then((response) => response.json())
 			.then((data) => {
-                console.log('data >> ', data.data)
-                if(data.status === 'error') {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to get count of cart',
-                        icon: 'error',
-                        confirmButtonText: 'Okay',
-                    });
-                }
+				console.log('data >> ', data.data);
+				if (data.status === 'error') {
+					Swal.fire({
+						title: 'Error!',
+						text: 'Failed to get count of cart',
+						icon: 'error',
+						confirmButtonText: 'Okay',
+					});
+				}
 
-                setCartCount(data.data.count)
+				setCartCount(data.data.count);
 			})
 			.catch((err) => {
-                console.log('error >> ', err);
+				console.log('error >> ', err);
 				Swal.fire({
 					title: 'Error!',
 					text: 'Failed to add to cart',
@@ -86,11 +82,11 @@ const ItemPage = () => {
 					confirmButtonText: 'Okay',
 				});
 			});
-    }
+	};
 
 	const fetchAll = async () => {
 		await fetchProduct();
-        await fetchCartCount();
+		await fetchCartCount();
 	};
 
 	useEffect(() => {
@@ -102,9 +98,9 @@ const ItemPage = () => {
 			<div className="flex flex-row justify-between p-4 bg-sky-300">
 				<span className="font-bold text-2xl uppercase text-white">Simajji Test</span>
 				<div className="inline">
-					<span className="uppercase p-5 text-lg font-bold align-middle">
+					<Link to="/cart" className="uppercase p-5 text-lg font-bold align-middle">
 						Cart ({cartCount})
-					</span>
+					</Link>
 					<span className="uppercase p-5 text-lg font-bold align-middle">
 						Logout
 					</span>
@@ -131,14 +127,17 @@ const ItemPage = () => {
 											Sold by : {v.users.firstName}
 										</span>
 
-										<button onClick={async () => {
-                                            await addItemToCart({
-                                                itemId : v.id,
-                                                qty : 1,
-                                                price : v.price,
-                                                userId : 3
-                                            })
-                                        }} className="bg-blue-400 p-4 mt-4 mx-auto">
+										<button
+											onClick={async () => {
+												await addItemToCart({
+													itemId: v.id,
+													qty: 1,
+													price: v.price,
+													userId: 3,
+												});
+											}}
+											className="bg-blue-400 p-4 mt-4 mx-auto"
+										>
 											Add to cart
 										</button>
 									</div>

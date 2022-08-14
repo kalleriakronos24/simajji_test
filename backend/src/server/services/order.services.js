@@ -35,8 +35,8 @@ class OrderService {
 			isSuccessTransaction,
 			userId,
 			orderAt: _orderAt,
-		};
-
+		}
+		
 		const check = await this.checkIfExist(modelData);
 
 		if (check) {

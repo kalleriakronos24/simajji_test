@@ -17,7 +17,6 @@ class CartService {
 
 			const check = await this.checkIfExist(body);
 
-			console.log('check >> ', check);
 			if (check) {
 				this.util.setError(403, 'Cart data already exist in database', body);
 				this.util.send(res);
@@ -30,7 +29,7 @@ class CartService {
 				const itemData = checkQty;
 
 				if (qty > itemData.stocks) {
-					this.util.setSuccess(401, 'Cannot exceed the amount of items qty', {
+					this.util.setError(403, 'Cannot exceed the amount of items qty', {
 						data: itemData,
 					});
 					this.util.send(res);
@@ -75,6 +74,55 @@ class CartService {
 		this.util.send(res);
 	}
 
+	async updateCartQty(res, body) {
+		const { cartId, qty } = body;
+
+		const check = await this.checkIfExist({
+			id: cartId,
+		});
+
+		if (!check) {
+			this.util.setError(401, 'Failed to get Cart item id', {
+				reason: 'cart id not found',
+			});
+			this.util.send(res);
+			return;
+		}
+
+		const getItemIdByCartID = await this.cart.findOne({
+			where: {
+				id: cartId,
+			},
+			include : ['items'],
+			raw: true,
+		});
+		const checkQty = await this.checkItemQty(getItemIdByCartID['items.id'], res);
+
+		if (!!checkQty) {
+			const itemData = checkQty;
+
+			if (qty > itemData.stocks) {
+				this.util.setError(403, 'Cannot exceed the amount of items qty', {
+					data: itemData,
+				});
+				this.util.send(res);
+				return;
+			}
+		}
+
+		const data = await this.cart.update(
+			{ qty: qty },
+			{
+				where: {
+					id: cartId,
+				},
+			}
+		);
+
+		this.util.setSuccess(200, `Success update cart id ${cartId} to qty ${qty}`, data);
+		this.util.send(res);
+	}
+
 	async getAllCartItems(res, body) {
 		try {
 			const data = await this.cart.findAll({
@@ -92,17 +140,38 @@ class CartService {
 		}
 	}
 
+	async getUserCartItems(res, body) {
+		try {
+			const data = await this.cart.findAll({
+				where: {
+					userId: body.userId,
+				},
+				raw: true,
+				include: ['users', 'items'],
+			});
+
+			this.util.setSuccess(200, 'Success get list of Cart data', data);
+			this.util.send(res);
+		} catch (err) {
+			this.util.setError(401, 'Failed to get list of Cart data', {
+				reason: err.message,
+			});
+			this.util.send(res);
+			return;
+		}
+	}
+
 	async getCartCount(response, body) {
 		try {
 			const data = await this.cart.count({
 				col: 'userId',
-				where : {
-					userId : body.userId
-				}
+				where: {
+					userId: body.userId,
+				},
 			});
 
 			this.util.setSuccess(200, 'Success get count of cart items', {
-				count : data
+				count: data,
 			});
 			this.util.send(response);
 		} catch (err) {
