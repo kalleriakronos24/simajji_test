@@ -33,6 +33,10 @@ class Model {
         return database.OrderDetails
     }
 
+    transaction(){
+        return database.Transactions
+    }
+
 }
 
 export default Model;

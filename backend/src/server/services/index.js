@@ -3,6 +3,8 @@ import CartService from './cart.services';
 import ItemsService from './items.services';
 import JwtService from './jwt.services';
 import OrderService from './order.services';
+import OrderDetailsService from './order_details.services';
+import TransactionService from './transaction.service';
 
 
 class Service {
@@ -22,7 +24,11 @@ class Service {
         return new OrderService();
     }
     orderDetailsService() {
-        return {}
+        return new OrderDetailsService()
+    }
+
+    transactionService() {
+        return new TransactionService()
     }
 };
 
