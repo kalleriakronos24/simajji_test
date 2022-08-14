@@ -6,6 +6,7 @@ import moment from 'moment';
 const CartPage = () => {
 	const [productList, setProductList] = useState([]);
 	const [cartCount, setCartCount] = useState(0);
+	const [orderCount, setOrderCount] = useState(0);
 
 	const fetchCart = async () => {
 		// user id 3
@@ -52,20 +53,20 @@ const CartPage = () => {
 	};
 
 	const checkoutToOrder = async (data) => {
-
-        const priceAllItem = productList.reduce((a,b) => a + (b['items.price'] * b.qty),0);
-        const allItemId = productList.map((v) => v['items.id']);
-        const body = {
-            totalPrice : priceAllItem,
-            paymentMethod: 'visa',
-            shippingAddress: 'test',
-            isSuccessTransaction: false,
-            userId: 3, // user id 3
-            orderAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-            cartItems: allItemId,
-            transactionId: null
-        }
-
+		const priceAllItem = productList.reduce((a, b) => a + b['items.price'] * b.qty, 0);
+		const allItemId = productList.map((v) => v['items.id']);
+		const allCartIds = productList.map((v) => v.id);
+		const body = {
+			totalPrice: priceAllItem,
+			paymentMethod: 'visa',
+			shippingAddress: 'test',
+			isSuccessTransaction: false,
+			userId: 3, // user id 3
+			orderAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+			cartItems: allItemId,
+			transactionId: null,
+			cartIds: allCartIds,
+		};
 
 		await fetch('http://localhost:8000/api/v1/order/add-new', {
 			method: 'post',
@@ -82,12 +83,14 @@ const CartPage = () => {
 					icon: data.status === 'error' ? 'error' : 'success',
 					confirmButtonText: 'Okay',
 				});
+
+				await fetchAll();
 			})
 			.catch((err) => {
 				console.log('error >> ', err);
 				Swal.fire({
 					title: 'Error!',
-					text: 'Failed to add to cart',
+					text: 'Failed to place an new order',
 					icon: 'error',
 					confirmButtonText: 'Okay',
 				});
@@ -95,7 +98,6 @@ const CartPage = () => {
 	};
 
 	const updateCartQty = async (cartId, qty) => {
-		console.log(Number(qty));
 		await fetch('http://localhost:8000/api/v1/cart/update/qty', {
 			method: 'post',
 			body: JSON.stringify({
@@ -159,9 +161,39 @@ const CartPage = () => {
 			});
 	};
 
+	const fetchOrderCount = async () => {
+		// 3 is user id
+		await fetch('http://localhost:8000/api/v1/order/count/3', {
+			method: 'get',
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.status === 'error') {
+					Swal.fire({
+						title: 'Error!',
+						text: 'Failed to get count of order',
+						icon: 'error',
+						confirmButtonText: 'Okay',
+					});
+				}
+
+				setOrderCount(data.data.count);
+			})
+			.catch((err) => {
+				console.log('error >> ', err);
+				Swal.fire({
+					title: 'Error!',
+					text: 'Failed to get count of order',
+					icon: 'error',
+					confirmButtonText: 'Okay',
+				});
+			});
+	};
+
 	const fetchAll = async () => {
 		await fetchCart();
 		await fetchCartCount();
+		await fetchOrderCount();
 	};
 
 	useEffect(() => {
@@ -175,6 +207,9 @@ const CartPage = () => {
 					Simajji Test
 				</Link>
 				<div className="inline">
+					<Link to="/order" className="uppercase p-5 text-lg font-bold align-middle">
+						Orders ({orderCount})
+					</Link>
 					<span className="uppercase p-5 text-lg font-bold align-middle">
 						Cart ({cartCount})
 					</span>
@@ -222,9 +257,6 @@ const CartPage = () => {
 														let qtyNumber = Number(
 															e.target.value
 														);
-														// if(qtyNumber <= 0) {
-														//     qtyNumber = 1
-														// }
 														await updateCartQty(
 															v.id,
 															qtyNumber
@@ -257,7 +289,6 @@ const CartPage = () => {
 				</div>
 				<button
 					onClick={async () => {
-						
 						await checkoutToOrder();
 					}}
 					className="p-10 bg-indigo-200 mx-auto mt-20 justify-center align-middle"

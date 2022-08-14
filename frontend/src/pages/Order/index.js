@@ -2,53 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const ItemPage = () => {
-	const [productList, setProductList] = useState([]);
+const OrderPage = () => {
+    const [orderData, setOrderData] = useState({});
 	const [cartCount, setCartCount] = useState(0);
 	const [orderCount, setOrderCount] = useState(0);
 
-	const fetchProduct = async () => {
-		await fetch('http://localhost:8000/api/v1/item/list', {
+	const fetchOrderCount = async () => {
+		// 3 is user id
+		await fetch('http://localhost:8000/api/v1/order/count/3', {
 			method: 'get',
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log('success get data >> ', data);
-				setProductList(data.data);
-			})
-			.catch((err) => {
-				Swal.fire({
-					title: 'Error!',
-					text: 'Failed to get product list',
-					icon: 'error',
-					confirmButtonText: 'Okay',
-				});
-			});
-	};
+				console.log('data >> ', data.data);
+				if (data.status === 'error') {
+					Swal.fire({
+						title: 'Error!',
+						text: 'Failed to get count of order',
+						icon: 'error',
+						confirmButtonText: 'Okay',
+					});
+				}
 
-	const addItemToCart = async (data) => {
-		await fetch('http://localhost:8000/api/v1/cart/add-new', {
-			method: 'post',
-			body: JSON.stringify(data),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-			.then((response) => response.json())
-			.then(async (data) => {
-				Swal.fire({
-					title: data.status === 'error' ? 'Error!' : 'Success!',
-					text: data.status === 'error' ? data.message : data.message,
-					icon: data.status === 'error' ? 'error' : 'success',
-					confirmButtonText: 'Okay',
-				});
-				await fetchCartCount();
+				setOrderCount(data.data.count);
 			})
 			.catch((err) => {
 				console.log('error >> ', err);
 				Swal.fire({
 					title: 'Error!',
-					text: 'Failed to add to cart',
+					text: 'Failed to get count of order',
 					icon: 'error',
 					confirmButtonText: 'Okay',
 				});
@@ -85,29 +67,31 @@ const ItemPage = () => {
 			});
 	};
 
-	const fetchOrderCount = async () => {
+
+    const fetchOrderData = async () => {
 		// 3 is user id
-		await fetch('http://localhost:8000/api/v1/order/count/3', {
+		await fetch('http://localhost:8000/api/v1/order/3', {
 			method: 'get',
 		})
 			.then((response) => response.json())
 			.then((data) => {
+				console.log('data >> ', data.data);
 				if (data.status === 'error') {
 					Swal.fire({
 						title: 'Error!',
-						text: 'Failed to get count of order',
+						text: 'Failed to get order data',
 						icon: 'error',
 						confirmButtonText: 'Okay',
 					});
 				}
 
-				setOrderCount(data.data.count);
+				setCartCount(data.data.count);
 			})
 			.catch((err) => {
 				console.log('error >> ', err);
 				Swal.fire({
 					title: 'Error!',
-					text: 'Failed to get count of order',
+					text: 'Failed to get order data',
 					icon: 'error',
 					confirmButtonText: 'Okay',
 				});
@@ -115,7 +99,6 @@ const ItemPage = () => {
 	};
 
 	const fetchAll = async () => {
-		await fetchProduct();
 		await fetchCartCount();
 		await fetchOrderCount();
 	};
@@ -145,44 +128,13 @@ const ItemPage = () => {
 
 			{/** Item List */}
 			<div className="px-8 py-12 max-w-4xl mx-auto">
-				<span className="font-medium text-center align-middle">Product List</span>
+				<span className="font-medium text-center align-middle">Order Summary</span>
 				<div className="grid grid-cols-4 gap-6 mt-6">
-					{!productList
-						? null
-						: productList.map((v) => {
-								return (
-									<div className="bg-sky-300 py-10 px-4">
-										<span className="block">
-											Item Name : {v.name}
-										</span>
-										<span className="block">Stock : {v.stocks}</span>
-										<span className="block">
-											Price/ea : {v.price}
-										</span>
-										<span className="block">
-											Sold by : {v.users.firstName}
-										</span>
-
-										<button
-											onClick={async () => {
-												await addItemToCart({
-													itemId: v.id,
-													qty: 1,
-													price: v.price,
-													userId: 3,
-												});
-											}}
-											className="bg-blue-400 p-4 mt-4 mx-auto"
-										>
-											Add to cart
-										</button>
-									</div>
-								);
-						  })}
+					<span>test</span>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default ItemPage;
+export default OrderPage;

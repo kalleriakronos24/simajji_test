@@ -20,17 +20,19 @@ class OrderController extends Service {
 		return await order.addNewOrder(res, body);
 	}
 
-	async getAllCartItems(req, res) {
-		const cart = super.cartService();
+	async getOrderCount(req,res) {
+        const order = super.orderService()
+        const body = req.params;
 
-		return await cart.getAllCartItems(res);
-	}
-
-    async deleteItemFromCart(req,res) {
-        const cart = super.cartService();
-
-        return await cart.deleteItemFromCart(res,req);
+        return await order.getOrderCount(res, body)
     }
+
+	async getOrderByUserId(req,res) {
+		const order = super.orderService()
+        const body = req.params;
+
+        return await order.getOrderByUserId(res, body)
+	}
 }
 
 export default OrderController;
