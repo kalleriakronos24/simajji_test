@@ -180,71 +180,11 @@ class App extends Routes {
      */
     setUpCronJob() {
 
-        // (new CronJob('* * * * * *', () => {
 
-        //     // tasks
-
-        //     // const Order = OrderSchema;
-
-        //     // Order.find({}, (err,res) => {
-
-        //     //     if(res){
-
-        //     //         return res.map((v,i) => {
-
-        //     //             // check wheter all the item of order status is true
-        //     //             let check = v.item.every((x,y) => x.status === true);
-
-
-
-        //     //         })
-
-        //     //     }
-
-        //     // })
-
-
-
-
-        // }, null, true, 'Asia/Makassar')).start();
     }
 
     setUpSockets(port) {
 
-        // define the endpoint socket; 
-
-        const io = socketIo(app.server, {
-            transports: ['websocket']
-        });
-
-
-        // create the socket
-        io.on('connection', (socket) => {
-
-            const updateStatus = (id, bool, socket_id) => new UserController().setStatusUserToOnline(id, bool, socket_id)
-            const emitOrderToCourier = (token) => new SocketController().getCurrentOrderCourier(token);
-
-            socket.on('userConnected', (token) => {
-
-                if (token !== undefined || token !== null || token !== "") {
-                    socket._id = token;
-                    console.log(token + ' connected');
-                    updateStatus(token, true, socket.id);
-                } else {
-                    console.log('token invalid, return');
-                }
-            });
-
-
-            // fired up when the user disconnected
-            socket.on('disconnect', () => {
-                console.log('someone disconnected');
-                if (socket._id) {
-                    console.log(socket._id + ' disconnected');
-                    updateStatus(socket._id, false, socket.id);
-                }
-            })
-        })
     };
 
 
@@ -258,7 +198,7 @@ class App extends Routes {
     setupServer(isClusterRequired) {
 
         // if it is a master process then call setting up worker process
-        if (isClusterRequired && cluster.isMaster) {
+        if (isClusterRequired && cluster.isPrimary) {
             this.setupWorkerProcesses();
         } else {
             // to setup server configurations and share port address for incoming requests

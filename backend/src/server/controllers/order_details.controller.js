@@ -10,6 +10,7 @@ class OrderDetailsController extends Service {
         const orderDetails = super.orderDetailsService()
         const body = req.params;
 
+        
         return await orderDetails.getOrderDetailList(res, body)
     }
 
